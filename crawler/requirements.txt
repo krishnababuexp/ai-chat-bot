@@ -1,0 +1,5 @@
+playwright==1.38.0
+beautifulsoup4
+httpx
+tqdm
+python-dotenv
