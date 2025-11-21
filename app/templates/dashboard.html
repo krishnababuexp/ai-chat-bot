@@ -1,12 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Crawler Dashboard</title>
-    <link rel="stylesheet" href="/static/styles.css">
+  <meta charset="UTF-8">
+  <title>Crawl History Dashboard</title>
+  <link href="/static/output.css" rel="stylesheet">
 </head>
-<body>
-    <h1>Crawler Dashboard</h1>
-    <p>Pages crawled: {{ stats.pages_crawled }}</p>
-    <p>Last URL: {{ stats.last_url }}</p>
+<body class="bg-gray-100 p-8">
+  <h1 class="text-2xl font-bold mb-6">Crawl History Dashboard</h1>
+
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white shadow rounded">
+      <thead class="bg-gray-200">
+        <tr>
+          <th class="py-2 px-4 text-left">URL</th>
+          <th class="py-2 px-4">Status</th>
+          <th class="py-2 px-4">Pages Crawled</th>
+          <th class="py-2 px-4">Message</th>
+          <th class="py-2 px-4">Created At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in history %}
+        <tr class="border-b">
+          <td class="py-2 px-4">{{ item.url }}</td>
+          <td class="py-2 px-4">{{ item.status }}</td>
+          <td class="py-2 px-4">{{ item.pages_crawled }}</td>
+          <td class="py-2 px-4">{{ item.message or '-' }}</td>
+          <td class="py-2 px-4">{{ item.created_at }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </body>
 </html>
