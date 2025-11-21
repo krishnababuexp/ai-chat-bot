@@ -8,8 +8,9 @@ from app.services.embedding import embed_text, search_vectors
 from sqlalchemy.orm import Session
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
-
+from app.api.v1.admin import router as admin_router
 from crawler.crawler import crawl_site
+from app.db.models import CrawlHistory
 
 app = FastAPI(title="RAG Backend")
 
@@ -23,21 +24,22 @@ class EmbedRequest(BaseModel):
 
 templates = Jinja2Templates(directory="app/templates")
 app.mount("/static", StaticFiles(directory="app/static"), name="static")
+app.include_router(admin_router, prefix="/api/v1")
 
 
 @app.get("/")
-async def dashboard(request: Request):
-    # Here you can pass crawler stats or test site info
-    stats = {"pages_crawled": 42, "last_url": "https://example.com"}
+def dashboard(request: Request, db: Session = Depends(get_db)):
+    # get all crawl history ordered by newest first
+    history = db.query(CrawlHistory).order_by(CrawlHistory.created_at.desc()).all()
+
     return templates.TemplateResponse(
-        "dashboard.html", {"request": request, "stats": stats}
+        "dashboard.html", {"request": request, "history": history}
     )
 
 
-@app.post("/test-crawl")
-async def test_crawl(url: str, background_tasks: BackgroundTasks):
-    background_tasks.add_task(crawl_site, url, 10)  # crawl 10 pages
-    return {"message": f"Crawling started for {url}"}
+@app.get("/crawl")
+def crawl_page(request: Request):
+    return templates.TemplateResponse("crawl.html", {"request": request})
 
 
 @app.post("/embed")

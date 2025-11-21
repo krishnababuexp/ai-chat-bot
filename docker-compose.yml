@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: docker/app.Dockerfile
+      dockerfile: Dockerfile
     container_name: rag_app
     restart: on-failure
     env_file: .env
@@ -13,7 +13,6 @@ services:
       - db
     volumes:
       - ./app:/app/app
-      - ./crawler:/app/crawler
     command: uvicorn app.main:app --host 0.0.0.0 --reload --port 8000
 
   crawler:
@@ -41,7 +40,7 @@ services:
     environment:
       POSTGRES_DB: ragdb
       POSTGRES_USER: raguser
-      POSTGRES_PASSWORD: changeme
+      POSTGRES_PASSWORD: ragpass
     volumes:
       - pgdata:/var/lib/postgresql/data
     ports:

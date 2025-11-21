@@ -55,3 +55,16 @@ class IndexJob(Base):
     started_at = Column(DateTime(timezone=True))
     finished_at = Column(DateTime(timezone=True))
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+
+class CrawlHistory(Base):
+    __tablename__ = "crawl_history"
+
+    id = Column(Integer, primary_key=True, index=True)
+    url = Column(String(500), nullable=False)
+    status = Column(
+        String(50), default="pending"
+    )  # pending, running, completed, failed
+    pages_crawled = Column(Integer, default=0)
+    message = Column(Text, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
